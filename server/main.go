@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
@@ -9,23 +10,51 @@ import (
 
 var g string
 
+// var uppercaseLetters = [...]string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
+
+// var lowercaseLetters = [...]string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"}
+
+var allChar = [...]string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ",", ".", "/", "?", "!", "@", "%", "(", ")", " "}
+
+var jump int = 1
+
+func caesarcipher(g string) {
+	phrase := strings.Split(g, "")
+	var hashedPhrase []string
+	//check if all of phrase chars are in array
+	for i := 0; i < len(phrase); i++ {
+		for j := 0; j < len(allChar); j++ {
+			if phrase[i] == allChar[j] {
+				switch len(allChar) > j+jump {
+				case false:
+					hashedPhrase = append(hashedPhrase, allChar[len(allChar)-j-jump])
+				default:
+					hashedPhrase = append(hashedPhrase, allChar[j+jump])
+				}
+			}
+		}
+	}
+	fmt.Printf("hashedPhrase: %v\n", hashedPhrase)
+
+}
+
 func main() {
 	r := gin.Default()
 	r.Use(static.Serve("/", static.LocalFile("./web", true)))
 	api := r.Group("/api")
 	api.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
-			"message": "pong",
+			"message": "Use caesar cipher to encode your message",
 		})
 	})
 	api.GET("/tobehashed", func(c *gin.Context) {
-		b := c.FullPath() == "/api/tobehashed"
-		if b {
+		if c.FullPath() == "/api/tobehashed" {
 			g = c.Request.URL.Query()["inputValue"][0]
+			caesarcipher(g)
+			c.JSON(200, gin.H{"msg": g})
 		} else {
 			fmt.Println("Error")
 		}
-		fmt.Println(g)
 	})
 
 	r.Run(":8080")

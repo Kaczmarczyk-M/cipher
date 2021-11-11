@@ -23,7 +23,7 @@ class DisplayFromApi extends React.Component {
   }
 
   render() {
-    return <h1>Ping {this.state.pong}</h1>;
+    return <h3>{this.state.pong}</h3>;
   }
 }
 
@@ -32,23 +32,22 @@ class FormToApi extends React.Component {
     super(props);
     this.state = {
       inputContent: "",
+      responseContent:"",
     };
-    // this.handleSubmit = this.handleSubmit.bind(this);
   }
-  handleChange(e) {
+  handleChange = (e) => {
     e.preventDefault();
     this.setState({ inputContent: e.target.value });
   }
-  handleSubmit() {
+
+  handleSubmit = () => {
     axios
       .get("/api/tobehashed", {
-          params: {
-              inputValue: this.state.inputContent
-          }
+        params: {
+          inputValue: this.state.inputContent,
+        },
       })
-      .then(function (response) {
-        console.log(response);
-      })
+      .then((response) => this.props.handleTextMessage1(response.data.msg))
       .catch(function (error) {
         console.log(error);
       });
@@ -60,12 +59,14 @@ class FormToApi extends React.Component {
           id="filled-basic"
           label="Here"
           variant="filled"
+          color="info"
+          sx={{bgcolor:"#EFFFDF"}}
           onInput={(evt) => this.handleChange(evt)}
         />
         <Button
           variant="contained"
           onClick={(e) => this.handleSubmit(e)}
-          sx={{ p: 2 }}
+          sx={{ p: 2}}
         >
           Wyślij
         </Button>
@@ -73,40 +74,32 @@ class FormToApi extends React.Component {
     );
   }
 }
-
-class HashedFuncTextField extends React.Component {
-    state = {
-        textValue:''
-    }
-    // componentDidMount(){
-    //     axios.get('/hashed').then(function(res) {console.log(res)})
-    // }
-    render() {
-        if (this.state.textValue === '') {
-            return(
-                <span>
-                    tutaj res
-                </span>
-            )
-        }
-        return (
-            <>
-            </>
-        );
-    }
-}
 class Content extends React.Component {
+  state = {
+    textMessage1: "",
+  };
+
+  handleTextMessage1 = (text) => {
+    this.setState({ textMessage1: text });
+  };
   render() {
     return (
       <span>
         <DisplayFromApi />
-        <FormToApi />
-        <br/>
-        <br/>
-        <HashedFuncTextField/>
+        <FormToApi handleTextMessage1={this.handleTextMessage1} />
+        <br />
+        <br />
+        <HashedFuncTextField textMessage1={this.state.textMessage1} />
       </span>
     );
   }
 }
 
+class HashedFuncTextField extends React.Component {
+  render() {
+    return (
+      <>{this.props.textMessage1 ? this.props.textMessage1 : <div></div>}</>
+    );
+  }
+}
 export default Content;
