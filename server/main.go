@@ -15,19 +15,20 @@ var allChar = [...]string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
 var jump int
 
 func caesarcipher(g string) (string, int) {
-	jump = rand.Intn(10)
+	jump = rand.Intn(len(allChar) - 1)
 	if jump == 0 {
 		jump = 1
 	}
 	if !(0 < jump && jump < len(allChar)) {
 		return "Error", 0
 	}
-	fmt.Printf("jump: %v\n", jump)
 	phrase := strings.Split(g, "")
 	var workingHashedPhrase []string
-	//check if all of phrase chars are in array
+	counter := 0
 	for i := 0; i < len(phrase); i++ {
+		counter = 0
 		for j := 0; j < len(allChar); j++ {
+
 			if phrase[i] == allChar[j] {
 				switch len(allChar) > j+jump {
 				case false:
@@ -35,9 +36,15 @@ func caesarcipher(g string) (string, int) {
 				default:
 					workingHashedPhrase = append(workingHashedPhrase, allChar[j+jump])
 				}
+				break
+			}
+			counter += 1
+			if counter == len(allChar) {
+				return "Error - invalid characters", 0
 			}
 		}
 	}
+
 	return strings.Join(workingHashedPhrase, ""), jump
 }
 
