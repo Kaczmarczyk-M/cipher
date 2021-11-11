@@ -18,24 +18,23 @@ var allChar = [...]string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
 
 var jump int = 1
 
-func caesarcipher(g string) {
+func caesarcipher(g string) string {
 	phrase := strings.Split(g, "")
-	var hashedPhrase []string
+	var workingHashedPhrase []string
 	//check if all of phrase chars are in array
 	for i := 0; i < len(phrase); i++ {
 		for j := 0; j < len(allChar); j++ {
 			if phrase[i] == allChar[j] {
 				switch len(allChar) > j+jump {
 				case false:
-					hashedPhrase = append(hashedPhrase, allChar[len(allChar)-j-jump])
+					workingHashedPhrase = append(workingHashedPhrase, allChar[len(allChar)-j-jump])
 				default:
-					hashedPhrase = append(hashedPhrase, allChar[j+jump])
+					workingHashedPhrase = append(workingHashedPhrase, allChar[j+jump])
 				}
 			}
 		}
 	}
-	fmt.Printf("hashedPhrase: %v\n", hashedPhrase)
-
+	return strings.Join(workingHashedPhrase, "")
 }
 
 func main() {
@@ -50,8 +49,7 @@ func main() {
 	api.GET("/tobehashed", func(c *gin.Context) {
 		if c.FullPath() == "/api/tobehashed" {
 			g = c.Request.URL.Query()["inputValue"][0]
-			caesarcipher(g)
-			c.JSON(200, gin.H{"msg": g})
+			c.JSON(200, gin.H{"msg": caesarcipher(g)})
 		} else {
 			fmt.Println("Error")
 		}
