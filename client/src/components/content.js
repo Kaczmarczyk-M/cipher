@@ -132,7 +132,7 @@ class HashedFuncTextField extends React.Component {
                 <Item>{this.props.textMessage1.msgCaesar}</Item>
               </Grid>
               <Grid item xs={2}>
-                <Item>{this.props.textMessage1.jump}</Item>
+                <Item>Jump: {this.props.textMessage1.jump}</Item>
               </Grid>
               {/* next */}
               <Grid item xs={3}>
