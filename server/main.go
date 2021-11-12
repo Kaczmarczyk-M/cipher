@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/md5"
 	"fmt"
 	"math/rand"
 	"strings"
@@ -54,14 +55,15 @@ func main() {
 	api := r.Group("/api")
 	api.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
-			"message": "Use caesar cipher to encode your message",
+			"message": "Encode your message",
 		})
 	})
 	api.GET("/tobehashed", func(c *gin.Context) {
 		if c.FullPath() == "/api/tobehashed" {
 			g = c.Request.URL.Query()["inputValue"][0]
 			list, jump := caesarcipher(g)
-			c.JSON(200, gin.H{"msg": list, "jump": jump})
+			c.JSON(200, gin.H{"msgCaesar": list, "jump": jump, "md5": md5.Sum([]byte(g))})
+			fmt.Println(md5.Sum([]byte(g)))
 		} else {
 			fmt.Println("Error")
 		}

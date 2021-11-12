@@ -1,6 +1,20 @@
 import * as React from "react";
 import axios from "axios";
 import { Button, TextField } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import Grid from "@mui/material/Grid";
+
+const Item = styled(Paper)(({ theme }) => ({
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: "center",
+  bgcolor: "#151300",
+  fontSize: 20,
+  whiteSpace:'normal',
+  color: theme.palette.text.primary,
+}));
 
 class DisplayFromApi extends React.Component {
   constructor() {
@@ -23,7 +37,11 @@ class DisplayFromApi extends React.Component {
   }
 
   render() {
-    return <h3>{this.state.pong}</h3>;
+    return (
+      <Box p="30px">
+        {this.state.pong}
+      </Box>
+    );
   }
 }
 
@@ -32,7 +50,7 @@ class FormToApi extends React.Component {
     super(props);
     this.state = {
       inputContent: "",
-      responseContent: "",
+      responseContent: "", //is it in use?
     };
   }
   handleChange = (e) => {
@@ -54,8 +72,7 @@ class FormToApi extends React.Component {
   };
   render() {
     return (
-      <
-      >
+      <>
         <TextField
           id="filled-basic"
           label="Here"
@@ -68,7 +85,7 @@ class FormToApi extends React.Component {
         <Button
           variant="contained"
           onClick={(e) => this.handleSubmit(e)}
-          sx={{ p: 2 }}
+          sx={{ p: 2, ml: 2 }}
         >
           Send
         </Button>
@@ -79,11 +96,11 @@ class FormToApi extends React.Component {
 class Content extends React.Component {
   state = {
     textMessage1: "",
-    jump:""
+    jump: "",
   };
 
   handleTextMessage1 = (text) => {
-    this.setState({ textMessage1: text.msg, jump: text.jump });
+    this.setState({ textMessage1: text });
   };
   render() {
     return (
@@ -92,8 +109,10 @@ class Content extends React.Component {
         <FormToApi handleTextMessage1={this.handleTextMessage1} />
         <br />
         <br />
-        <HashedFuncTextField textMessage1={this.state.textMessage1} 
-        jump={this.state.jump}/>
+        <HashedFuncTextField
+          textMessage1={this.state.textMessage1}
+          jump={this.state.jump}
+        />
       </span>
     );
   }
@@ -102,7 +121,32 @@ class Content extends React.Component {
 class HashedFuncTextField extends React.Component {
   render() {
     return (
-      <>{this.props.textMessage1 ? this.props.textMessage1 : <div></div>}<br/>{this.props.jump}</>
+      <>
+        {this.props.textMessage1 ? (
+          <Box width="25em"sx={{ flexGrow: 1 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={3}>
+                <Item>Caesar Cipher</Item>
+              </Grid>
+              <Grid item xs={7}>
+                <Item>{this.props.textMessage1.msgCaesar}</Item>
+              </Grid>
+              <Grid item xs={2}>
+                <Item>{this.props.textMessage1.jump}</Item>
+              </Grid>
+              {/* next */}
+              <Grid item xs={3}>
+                <Item>Hash: MD5</Item>
+              </Grid>
+              <Grid item xs={9}>
+                <Item>{this.props.textMessage1.md5}</Item>
+              </Grid>
+            </Grid>
+          </Box>
+        ) : (
+          <></>
+        )}
+      </>
     );
   }
 }
