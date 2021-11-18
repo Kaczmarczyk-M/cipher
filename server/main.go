@@ -24,7 +24,7 @@ var AllRequests []uRequest
 const placeToSaveData string = "../data.json"
 
 var g string
-var allChar = [...]string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ",", ".", "/", "?", "!", "@", "%", "(", ")", " "}
+var allChar = [...]string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ",", ".", "/", "?", "!", "@", "%", "(", ")", " ", "ś", "Ś", "Ą", "Ż", "ż", "ą", "ź", "Ź", "ł", "Ł", "ę", "Ę", "Ó", "ó", "ć", "Ć"}
 
 var jump int
 
@@ -36,19 +36,27 @@ func caesarcipher(g string) (string, int) {
 	if !(0 < jump && jump < len(allChar)) {
 		return "Error", 0
 	}
+	// commetned works with ascii but doesent include polish char
+	// var workingHashedPhrase []string
+	// byteArray := []byte(g)
+	// for _, v := range byteArray {
+	// 	workingHashedPhrase = append(workingHashedPhrase, string(v+byte(jump)))
+	// }
+
 	phrase := strings.Split(g, "")
 	var workingHashedPhrase []string
 	counter := 0
 	for i := 0; i < len(phrase); i++ {
 		counter = 0
 		for j := 0; j < len(allChar); j++ {
-
+			//helper is used to calculate if table would run out of range
+			var helper = jump + j
 			if phrase[i] == allChar[j] {
-				switch len(allChar) > j+jump {
+				switch len(allChar) > helper {
 				case false:
-					workingHashedPhrase = append(workingHashedPhrase, allChar[jump+j-len(allChar)])
+					workingHashedPhrase = append(workingHashedPhrase, allChar[helper-len(allChar)])
 				default:
-					workingHashedPhrase = append(workingHashedPhrase, allChar[j+jump])
+					workingHashedPhrase = append(workingHashedPhrase, allChar[helper])
 				}
 				break
 			}
@@ -105,7 +113,6 @@ func main() {
 			list, jump := caesarcipher(g)
 			addRequestToJson(g, AllRequests)
 			c.JSON(200, gin.H{"msgCaesar": list, "jump": jump, "md5": md5.Sum([]byte(g))})
-			fmt.Println(md5.Sum([]byte(g)))
 		} else {
 			fmt.Println("Error")
 		}
